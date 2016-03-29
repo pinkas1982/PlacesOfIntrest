@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Places Of Intrest</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="PlaceValue">Name</string>
+    <string name="AddressValue">Address</string>
+    <string name="DistanceValue">Distance</string>
+    <string name="searchValue">Search</string>
+    <string name="urlValue">Url</string>
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout"
+        android:layout_toRightOf="@+id/placesImageViewId"
+        android:layout_toEndOf="@+id/placesImageViewId"
+        android:layout_marginTop="5dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/PlaceValue"
+            android:id="@+id/placeNametextView"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/placesImageViewId"
+            android:layout_toEndOf="@+id/placesImageViewId"
+            android:paddingLeft="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/AddressValue"
+            android:id="@+id/addressTextView"
+            android:layout_gravity="left|center_vertical"
+            android:paddingLeft="15dp"
+            android:maxLines="3"
+            android:layout_below="@+id/placeNametextView"
+            android:layout_toRightOf="@+id/placesImageViewId"
+            android:layout_toEndOf="@+id/placesImageViewId" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/DistanceValue"
+                android:id="@+id/distanceTextView"
+                android:layout_gravity="left|bottom"
+                android:paddingLeft="15dp"
+                android:layout_below="@+id/addressTextView"
+                android:layout_toRightOf="@+id/placesImageViewId"
+                android:layout_toEndOf="@+id/placesImageViewId" />
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="83dp"
+            android:layout_height="68dp"
+            android:id="@+id/placesImageViewId"
+            android:layout_gravity="right|top"
+            android:src="@drawable/places_image"
+        android:paddingLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
