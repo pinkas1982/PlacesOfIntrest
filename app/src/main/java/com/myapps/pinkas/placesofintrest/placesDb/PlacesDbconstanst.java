@@ -5,7 +5,7 @@ import android.net.Uri;
 /**
  * Created by pinkas on 3/20/2016.
  */
-public  class PlacesDbconstanst {
+public class PlacesDbconstanst {
     public final static String AUTHORITY = "com.myapps.pinkas.placesofintrest.placesDb.PlacesProvider";
     public final static String TABLE_NAME = "places";
 

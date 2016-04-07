@@ -25,13 +25,14 @@ import java.net.URL;
  */
 public class GoogleAccess {
 
-    public static String searchPlace(String q)
-    {
+    public static String searchPlace(String q) {
 
-        String url1="https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
-        String url2="&sensor=false&key=AIzaSyBrsPDbnaQFd4aHAUNFkpwQZDtWnK0-zw0";
+        String url1 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";//search by text
+        String url2 = "&sensor=false&key=AIzaSyBrsPDbnaQFd4aHAUNFkpwQZDtWnK0-zw0";
+        String completeURL = url1 + q + url2;
 
-        String completeURL= url1+q+url2;
+
+        // String completeURL= url1+q+url2+urlKey;// need to overWrite this
 
 
         BufferedReader input = null;
@@ -46,7 +47,7 @@ public class GoogleAccess {
             connection = (HttpURLConnection) url.openConnection();
 
             //status check:
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK){
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 //connection not good - return.
                 return null;
             }
@@ -56,18 +57,18 @@ public class GoogleAccess {
             input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             //go over the input, line by line
-            String line="";
-            while ((line=input.readLine())!=null){
+            String line = "";
+            while ((line = input.readLine()) != null) {
                 //append it to a StringBuilder to hold the
                 //resulting string
-                response.append(line+"\n");
+                response.append(line + "\n");
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally{
-            if (input!=null){
+        } finally {
+            if (input != null) {
                 try {
                     //must close the reader
                     input.close();
@@ -76,7 +77,7 @@ public class GoogleAccess {
                 }
             }
 
-            if(connection!=null){
+            if (connection != null) {
                 //must disconnect the connection
                 connection.disconnect();
             }
@@ -88,21 +89,20 @@ public class GoogleAccess {
 
 
     }
-     public static class myImageDownloader extends AsyncTask<String, Void, Bitmap>
-    {
+
+    public static class myImageDownloader extends AsyncTask<String, Void, Bitmap> {
 
         ImageView imgToChange;
 
-        public  myImageDownloader(ImageView imgToChange)
-        {
-            this.imgToChange=imgToChange;
+        public myImageDownloader(ImageView imgToChange) {
+            this.imgToChange = imgToChange;
         }
 
 
         @Override
         protected Bitmap doInBackground(String[] params) {
 
-            Bitmap b=  getBitmapFromURL(params[0]);
+            Bitmap b = getBitmapFromURL(params[0]);
 
             return b;
 

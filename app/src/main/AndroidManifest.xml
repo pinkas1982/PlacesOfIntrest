@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 
+
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,17 +28,25 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service android:name=".internet.SearchPlacesServices"/>
+        <service android:name=".internet.SearchPlacesNearBy"/>
         <provider
             android:authorities="com.myapps.pinkas.placesofintrest.placesDb.PlacesProvider"
             android:name=".placesDb.PlacesProvider"
             android:enabled="true"
             android:exported="false"/>
+        <receiver android:name=".receiver.PlugInControlReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>

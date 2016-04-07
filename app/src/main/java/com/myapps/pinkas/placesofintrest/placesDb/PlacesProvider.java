@@ -36,15 +36,15 @@ public class PlacesProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
-        String currentTableToSearch= getTableName(uri);
+        String currentTableToSearch = getTableName(uri);
 
         //here we can interfere and change values of the query
         //if(selection.equals)...
 
 
-        Cursor c=    placesDbHelper.getReadableDatabase().query(currentTableToSearch, projection,selection ,selectionArgs,null, null, sortOrder );
+        Cursor c = placesDbHelper.getReadableDatabase().query(currentTableToSearch, projection, selection, selectionArgs, null, null, sortOrder);
 
-     //   getContext().getContentResolver().notifyChange(uri, null);
+           getContext().getContentResolver().notifyChange(uri, null);
         return c;
     }
 
@@ -97,7 +97,7 @@ public class PlacesProvider extends ContentProvider {
         int result = db.delete(getTableName(uri), selection, selectionArgs);
 
 		/*
-		 * NOTE : even though it's a getWritableDatabase - we won't close it here
+         * NOTE : even though it's a getWritableDatabase - we won't close it here
 		 * if we do, we'll raise errors later when trying to re-query the data.
 		 * it's OK. it works.
 		 * the db will get closed the provider is closed.

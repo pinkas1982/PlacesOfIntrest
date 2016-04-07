@@ -26,9 +26,10 @@ public class PlacesDbHandler {
     public PlacesDbHandler(Context context) {
         placesDbHelper = new PlacesDbHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     //add a new place to the Db
     public static void addPlace(Places places, Context context) {
-     //   SQLiteDatabase db = placesDbHelper.getWritableDatabase();
+        //   SQLiteDatabase db = placesDbHelper.getWritableDatabase();
         PlacesDbHelper db = new PlacesDbHelper(context);
         ContentValues newPlaceValues = new ContentValues();
         newPlaceValues.put(PlacesDbconstanst.CurrentPlaces.PLACES_NAME, places.getPlaceName());
@@ -39,13 +40,14 @@ public class PlacesDbHandler {
 
         try {
             db.getWritableDatabase().insertOrThrow(PLACES_TABLE_NAME, null, newPlaceValues);
-        }catch (SQLiteException ex) {
+        } catch (SQLiteException ex) {
             Log.e(LOG_TAG, ex.getMessage());
             throw ex;
         } finally {
             db.close();
         }
     }
+
     //update movie on the Db
     public void updateMovieList(Places places) {
         SQLiteDatabase db = placesDbHelper.getWritableDatabase();
@@ -56,8 +58,7 @@ public class PlacesDbHandler {
         } catch (SQLiteException ex) {
             Log.e(LOG_TAG, ex.getMessage());
             throw ex;
-        }
-        finally {
+        } finally {
             db.close();
         }
     }
@@ -88,7 +89,8 @@ public class PlacesDbHandler {
         return movieList;
 
     }
-//TODO: write a method which delet a single place
+
+    //TODO: write a method which delet a single place
     // Delete a place from the Db
     public void deletePlaces(Places place) {
         SQLiteDatabase db = placesDbHelper.getWritableDatabase();
@@ -96,13 +98,13 @@ public class PlacesDbHandler {
          /*   db.delete(PLACES_TABLE_NAME, PLACES_ID + "=?",
                    new String[] { String.valueOf(place.getplacesId()) } );*/
         } catch (SQLiteException ex) {
-       //     Log.e(LOG_TAG, ex.getMessage());
+            //     Log.e(LOG_TAG, ex.getMessage());
             throw ex;
-        }
-        finally {
+        } finally {
             db.close();
         }
     }
+
     //delet all places from db
     public void deletAllPlaces() {
         SQLiteDatabase db = placesDbHelper.getWritableDatabase();

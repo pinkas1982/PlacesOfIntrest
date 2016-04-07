@@ -8,4 +8,9 @@
     <string name="DistanceValue">Distance</string>
     <string name="searchValue">Search</string>
     <string name="urlValue">Url</string>
+    <string-array name="tabs">
+        <item>Main</item>
+        <item>Favorite</item>
+        <item>History</item>
+    </string-array>
 </resources>

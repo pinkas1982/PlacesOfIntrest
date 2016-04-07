@@ -26,7 +26,7 @@ public class MyMapFragment extends Fragment {
 
         // in case of null create a dummy city
         if (places == null) {
-            places = new Places(0,"no Location selected","","", "");
+            places = new Places(0, "no Location selected", "", "", "");
         }
 
         // the arguments to pass
@@ -39,7 +39,6 @@ public class MyMapFragment extends Fragment {
 
         // create a fragment:
         MyMapFragment mapFragmant = new MyMapFragment();
-
 
 
         // set the arguments:
@@ -55,21 +54,28 @@ public class MyMapFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.mapfragment, container, false);
 
-        Bundle b=getArguments();
+        Bundle b = getArguments();
 
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getChildFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
         // get the map object from the fragment:
-
+        if (mapFragment == null) {
+            fm = getFragmentManager();
+            mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
+        }
         GoogleMap map = mapFragment.getMap();
 
-        if(map!= null) {
+        if (map != null) {
             // setup the map type:
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
             // setup map position and zoom
-            LatLng position = new LatLng(b.getDouble("lat"), b.getDouble("lon"));
+            String loc = b.getString("location");
+            String loc2parms[] = loc.split(",");
+            double lat = Double.parseDouble(loc2parms[0].replace("lat:", ""));
+            double lng = Double.parseDouble(loc2parms[1].replace("lng:", ""));
+            LatLng position = new LatLng(lat, lng);
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 15);
             map.moveCamera(update);
         }

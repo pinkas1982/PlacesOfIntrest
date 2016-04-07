@@ -7,43 +7,78 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="?android:attr/selectableItemBackground"
     tools:context="com.myapps.pinkas.placesofintrest.MainActivity">
 
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/searchValue"
-        android:id="@+id/placeButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/placeEditText"
-        android:layout_alignTop="@+id/placeButton"
-        android:layout_toRightOf="@+id/placeButton"
-        android:layout_toEndOf="@+id/placeButton" />
-
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/app_bar">
+
+        </include>
+
+        <com.myapps.pinkas.placesofintrest.tabs.SlidingTabsLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/placeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/searchValue" />
+
+    <EditText
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:id="@+id/placeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/placeButton"
+        android:layout_toEndOf="@+id/placeButton"
+        android:layout_toRightOf="@+id/placeButton" />
+
+    <FrameLayout
         android:id="@+id/fragmantContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/placeButton">
 
         <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.myapps.pinkas.placesofintrest.fragmants.PlacesFragment"
             android:id="@+id/fragment"
+            android:name="com.myapps.pinkas.placesofintrest.fragmants.PlacesFragment"
+            android:layout_width="match_parent"
+            android:layout_height="401dp"
             android:layout_above="@+id/myMapId"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_gravity="center_horizontal|bottom" />
     </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/nearBycheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/placeButton"
+        android:checked="false"
+        android:text="Search Places Near By" />
 
 </RelativeLayout>
