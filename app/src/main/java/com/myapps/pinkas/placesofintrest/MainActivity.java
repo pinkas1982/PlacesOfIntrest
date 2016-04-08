@@ -2,6 +2,7 @@ package com.myapps.pinkas.placesofintrest;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -10,13 +11,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -34,20 +34,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.myapps.pinkas.placesofintrest.fragmants.MyMapFragment;
 import com.myapps.pinkas.placesofintrest.internet.SearchPlacesNearBy;
 import com.myapps.pinkas.placesofintrest.internet.SearchPlacesServices;
 import com.myapps.pinkas.placesofintrest.places.Places;
 import com.myapps.pinkas.placesofintrest.tabs.SlidingTabsLayout;
-//import com.myapps.pinkas.placesofintrest.utils.ClickListener;
 import com.myapps.pinkas.placesofintrest.utils.PlacesFragmentListenerr;
+
+//import com.myapps.pinkas.placesofintrest.utils.ClickListener;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, PlacesFragmentListenerr,
@@ -74,6 +76,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SlidingTabsLayout mTabs;
     RecyclerView rv;
     AdapterView.AdapterContextMenuInfo palcesInfo;
+    private Tracker mTracker;
 
 
     @Override
@@ -83,6 +86,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         initComponent();
         registerForContextMenu(rv);
         buildGoogleApiClient();
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();// google analytics
+        mTracker = application.getDefaultTracker();
 
         mySearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -103,6 +109,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+
+  /*  @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Setting screen name: " + name);
+        mTracker.setScreenName("Image~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }*/
 
     private void initComponent() {
         goBtn = (Button) findViewById(R.id.placeButton);
@@ -352,6 +366,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void chooseKmOrMiles() {
         //the user can choose between km or miles
+    }
+
+    public class AnalyticsApplication extends Application {
+
+
+        /**
+         * Gets the default {@link Tracker} for this {@link Application}.
+         * @return tracker
+         */
+        synchronized public Tracker getDefaultTracker() {
+            if (mTracker == null) {
+                GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+                // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+                mTracker = analytics.newTracker(R.xml.global_tracker);
+            }
+            return mTracker;
+        }
     }
 
 }
