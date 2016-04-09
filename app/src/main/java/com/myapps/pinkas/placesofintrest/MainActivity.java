@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -77,6 +78,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     RecyclerView rv;
     AdapterView.AdapterContextMenuInfo palcesInfo;
     private Tracker mTracker;
+    public static GoogleAnalytics analytics;
 
 
     @Override
@@ -87,8 +89,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         registerForContextMenu(rv);
         buildGoogleApiClient();
 
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();// google analytics
-        mTracker = application.getDefaultTracker();
+        analytics = GoogleAnalytics.getInstance(this); // google analytics
+        analytics.setLocalDispatchPeriod(1800);
+        mTracker = analytics.newTracker("UA-76184631-1");
+        mTracker.enableExceptionReporting(true);
+        mTracker.enableAutoActivityTracking(true);
 
         mySearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -110,10 +115,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-  /*  @Override
+/*    @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "Setting screen name: " + name);
+        Log.i(TAG, "Setting screen name: " + "HomeScreen");
         mTracker.setScreenName("Image~" + name);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }*/
@@ -263,7 +268,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
 
-        // Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
@@ -368,22 +372,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //the user can choose between km or miles
     }
 
-    public class AnalyticsApplication extends Application {
+/*    public class AnalyticsApplication extends Application {
 
-
-        /**
-         * Gets the default {@link Tracker} for this {@link Application}.
-         * @return tracker
-         */
         synchronized public Tracker getDefaultTracker() {
             if (mTracker == null) {
-                GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+                analytics = GoogleAnalytics.getInstance(this);
                 // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-                mTracker = analytics.newTracker(R.xml.global_tracker);
+                mTracker = analytics.newTracker(R.xml.global_trackerr);
             }
             return mTracker;
         }
-    }
+    }*/
 
 }
 
