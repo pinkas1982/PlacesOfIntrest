@@ -293,41 +293,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater placesMenuInflater = getMenuInflater();
-        placesMenuInflater.inflate(R.menu.place_context_menu, menu);
-
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-
-        palcesInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.edit_id:
-                    sharePlaces(palcesInfo.position);
-                return true;
-            case R.id.delet_id:
-                //      deletedFavorite(palcesInfo.position);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-
-
-        }
-
-    }
-    //this method share the place via facebook or whatsup or mail
-    private void sharePlaces(int position) {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareBody = "Here is the share content body";
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, "Share via"));
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -341,10 +306,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 // Handle item selection
         switch (item.getItemId()) {
-            case R.id.deletAllMoviesId:
+            case R.id.kmOrMileId:
                 new AlertDialog.Builder(this)
-                        .setTitle("Delete Movies")
-                        .setMessage("Are you sure you want to delete all movies?")
+                        .setTitle("Choose Parameter of Distance")
+                        .setMessage("Km or Mile")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 chooseKmOrMiles();
@@ -359,7 +324,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
                 return true;
-            case R.id.exitId:
+            case R.id.deletFavorite:
                 finish();
                 return true;
             default:
@@ -372,17 +337,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //the user can choose between km or miles
     }
 
-/*    public class AnalyticsApplication extends Application {
-
-        synchronized public Tracker getDefaultTracker() {
-            if (mTracker == null) {
-                analytics = GoogleAnalytics.getInstance(this);
-                // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-                mTracker = analytics.newTracker(R.xml.global_trackerr);
-            }
-            return mTracker;
-        }
-    }*/
 
 }
 

@@ -13,6 +13,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.myapps.pinkas.placesofintrest.R;
 import com.myapps.pinkas.placesofintrest.places.Places;
 
@@ -23,6 +25,7 @@ public class MyMapFragment extends Fragment {
 
 
     public static MyMapFragment newInstance(Places places) {
+
 
         // in case of null create a dummy city
         if (places == null) {
@@ -76,8 +79,9 @@ public class MyMapFragment extends Fragment {
             double lat = Double.parseDouble(loc2parms[0].replace("lat:", ""));
             double lng = Double.parseDouble(loc2parms[1].replace("lng:", ""));
             LatLng position = new LatLng(lat, lng);
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 15);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 18);
             map.moveCamera(update);
+            map.addMarker(new MarkerOptions().position(position));
         }
 
 

@@ -2,6 +2,7 @@ package com.myapps.pinkas.placesofintrest;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -10,9 +11,14 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +33,7 @@ import com.myapps.pinkas.placesofintrest.internet.GoogleAccess;
 import com.myapps.pinkas.placesofintrest.places.Places;
 import com.myapps.pinkas.placesofintrest.utils.PlacesFragmentListenerr;
 
+import static android.support.v4.app.ActivityCompat.startActivity;
 import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.CurrentPlaces.*;
 
 //import static com.myapps.pinkas.placesofintrest.constans.PlacesContract.Places.*;
@@ -46,6 +53,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     private DataSetObserver mDataSetObserver;
     private boolean mDataValid;
 
+    AdapterView.AdapterContextMenuInfo palcesInfo;
+
 
     public static double currentLatitude;
     public static double currentLongitude;
@@ -53,11 +62,20 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     public double lng;
     public double d;
 
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public PlacesAdapter(Cursor cursor, Context context) {
         this.context = context;
         this.cursor = cursor;
-        mDataSetObserver = new NotifyingDataSetObserver();
+       mDataSetObserver = new NotifyingDataSetObserver();
         if (cursor != null) {
             cursor.registerDataSetObserver(mDataSetObserver);
         }
@@ -66,10 +84,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
     @Override
     public PlaceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //   cursor.setNotificationUri(context.getContentResolver(), CONTENT_URI);
         LayoutInflater inflater = LayoutInflater.from(context);
         View myView = inflater.inflate(R.layout.single_place, parent, false);
-
 
         PlaceHolder placeHolder = new PlaceHolder(myView, new PlaceHolder.PlacesFragmantListener() {
             @Override
@@ -88,7 +104,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     }
 
     @Override
-    public void onBindViewHolder(PlacesAdapter.PlaceHolder holder, int position) {
+    public void onBindViewHolder(final PlacesAdapter.PlaceHolder holder, int position) {
 
         if (cursor.moveToPosition(position)) {
 
@@ -105,23 +121,25 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
             String dis = cursor.getString(column_number3);
             distance.setText(dis);
 
+
             int column_number4 = cursor.getColumnIndex(PLACE_PHOTO);
             String photo = cursor.getString(column_number4);
-
-
-
-
-
-            if (!photo.equals("")) {
+              if (!photo.equals("")) {
                 GoogleAccess.myImageDownloader loader = new GoogleAccess.myImageDownloader(imgplace);
                 loader.execute(photo);
             }
 
         }
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(holder.getPosition());
+                return false;
+            }
+        });
+
     }
-
-
 
 
 
@@ -140,7 +158,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
 
 
-    public static class PlaceHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class PlaceHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnCreateContextMenuListener {
 
         PlacesFragmantListener listener;
         Cursor c;
@@ -153,7 +172,9 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
             distance = (TextView) itemView.findViewById(R.id.distanceTextView);
             imgplace = (ImageView) itemView.findViewById(R.id.placesImageViewId);
             itemView.setOnClickListener(this);
+          //  itemView.setOnLongClickListener(this);
             c = cursor;
+            itemView.setOnCreateContextMenuListener(this);
 
         }
 
@@ -170,6 +191,21 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
                 }
             }
         }
+
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+            menu.setHeaderTitle("Select The Action");
+            menu.add(Menu.NONE, R.id.share_id,
+                    Menu.NONE, R.string.share_place);
+            menu.add(Menu.NONE, R.id.waze_id,
+                    Menu.NONE, R.string.open_waze);
+            menu.add(Menu.NONE, R.id.save_id,
+                    Menu.NONE, R.string.save_favorite);
+
+        }
+
 
         public static interface PlacesFragmantListener {
             void onLocationSelected(Places places);

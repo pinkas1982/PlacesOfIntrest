@@ -4,16 +4,20 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.myapps.pinkas.placesofintrest.PlacesAdapter;
 import com.myapps.pinkas.placesofintrest.R;
@@ -43,6 +48,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     MyMapFragment mapFragment;
     RecyclerView rv;
 
+    AdapterView.AdapterContextMenuInfo palcesInfo;
 
     public PlacesFragment() {
         // Required empty public constructor
@@ -60,22 +66,9 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
 
         final Cursor cursor = getActivity().getContentResolver().query(CONTENT_URI, null, null, null, null);
         adapter = new PlacesAdapter(cursor, getActivity());
-        //   adapter.setClickListener(this);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-       /* // record this value before making any changes to the existing list
-        int curSize = adapter.getItemCount();
-
-        // replace this line with wherever you get new records
-        Cursor newItems = getActivity().getContentResolver().query(CONTENT_URI, null, null, null, null);
-
-        // update the existing list
-        rv.addAll(newItems);
-        // curSize should represent the first element that got added
-        // newItems.size() represents the itemCount
-        adapter.notifyItemRangeInserted(curSize, newItems.size());*/
-
+        registerForContextMenu(rv);
 
         return myFragView;
     }
@@ -122,5 +115,63 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
 
 
     }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = -1;
+        try {
+            position = ((PlacesAdapter) rv.getAdapter()).getPosition();
+        } catch (Exception e) {
+            Log.d("", e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(item);
+        }
+        switch (item.getItemId()) {
+            case R.id.share_id:
+                // share the place
+                Toast.makeText(getActivity(), "sagsdg",Toast.LENGTH_LONG).show();
+                shareIt();
+                break;
+
+            case R.id.waze_id:
+                // open waze
+                Toast.makeText(getActivity(), "open waze",Toast.LENGTH_LONG).show();
+                openWaze();
+                break;
+            case R.id.save_id:
+                // save to favorite
+                Toast.makeText(getActivity(),"save favorite",Toast.LENGTH_LONG).show();
+
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void openWaze() {
+
+        try
+        {
+            String url = "waze://?q=Hawaii";
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+            startActivity( intent );
+        }
+        catch ( ActivityNotFoundException ex  )
+        {
+            Intent intent =
+                    new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze") );
+            startActivity(intent);
+        }
+    }
+
+//this is the share intent method
+    private void shareIt() {
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, "check out this place");
+     //   sharingIntent.putExtra(Intent.EXTRA_TEXT,);
+        //sharingIntent.putExtra(Intent.EXTRA_TEXT, );
+        sharingIntent.setType("text/plain");
+       // startActivity(sharingIntent);
+        startActivity(Intent.createChooser(sharingIntent, getResources().getText(R.string.send_to)));
+
+    }
+
 
 }

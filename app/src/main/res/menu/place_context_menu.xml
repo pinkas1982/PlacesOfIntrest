@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/edit_id"
+        android:id="@+id/share_id"
         android:title="Share Place"
         />
     <item
-        android:id="@+id/delet_id"
-        android:title="Delet Favorite"
+        android:id="@+id/save_id"
+        android:title="Save Favorite"
+        />
+    <item
+        android:id="@+id/waze_id"
+        android:title="Open Waze"
         />
 </menu>

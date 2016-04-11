@@ -8,6 +8,10 @@
     <string name="DistanceValue">Distance</string>
     <string name="searchValue">Search</string>
     <string name="urlValue">Url</string>
+    <string name="send_to">send_to</string>
+    <string name="share_place">Share Place</string>
+    <string name="open_waze">Open Waze</string>
+    <string name="save_favorite">Save Favorite</string>
     <string-array name="tabs">
         <item>Main</item>
         <item>Favorite</item>
