@@ -45,6 +45,8 @@ import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.Curre
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolder>  {
 
     public Cursor cursor;
+    public Cursor cursor1;
+
     private static Context context;
     private static TextView placeName, address, distance, url;
     public static ImageView imgplace;
@@ -75,10 +77,10 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     public PlacesAdapter(Cursor cursor, Context context) {
         this.context = context;
         this.cursor = cursor;
-       mDataSetObserver = new NotifyingDataSetObserver();
-        if (cursor != null) {
+      // mDataSetObserver = new NotifyingDataSetObserver();
+       /* if (cursor != null) {
             cursor.registerDataSetObserver(mDataSetObserver);
-        }
+        }*/
 
     }
 
@@ -119,6 +121,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
             int column_number3 = cursor.getColumnIndex(PLACES_DISTANEC);
             String dis = cursor.getString(column_number3);
+    //        getdistance(currentLocation);
             distance.setText(dis);
 
 
@@ -140,6 +143,23 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
         });
 
     }
+
+/*public void getdistance(Location currentLocation){
+   currentLocation = MainActivity.currentLocation;
+    currentLatitude = currentLocation.getLatitude();
+    currentLongitude = currentLocation.getLongitude();
+
+    currentLocation.setLatitude(currentLatitude);
+    currentLocation.setLongitude(currentLongitude);
+
+    Location loc2 = new Location("");
+*//*    loc2.setLatitude(lat2);
+    loc2.setLongitude(lon2);
+
+    float distanceInMeters = loc1.distanceTo(loc2);*//*
+}*/
+
+
 
 
 
@@ -182,10 +202,10 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
         @Override
         public void onClick(View v) {
-            PlacesFragmentListenerr l = (PlacesFragmentListenerr) context;
+            PlacesFragmentListenerr listenerr = (PlacesFragmentListenerr) context;
             if (c.moveToPosition(getPosition())) {
                 Places p = new Places(0, c.getString(5), null, null, null);
-                l.onLocationSelected(p);
+                listenerr.onLocationSelected(p);
                 if (clickListener != null) {
                     clickListener.itemClicked(v, getPosition());
                 }
@@ -216,7 +236,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
         }
     }
 
-    private class NotifyingDataSetObserver extends DataSetObserver {
+/*    private class NotifyingDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
             super.onChanged();
@@ -230,8 +250,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
             mDataValid = false;
             notifyDataSetChanged();
 
-        }
-    }
+        }*/
+
 
 
 }

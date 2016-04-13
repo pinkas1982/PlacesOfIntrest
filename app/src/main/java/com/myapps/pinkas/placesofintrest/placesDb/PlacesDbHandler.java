@@ -39,7 +39,7 @@ public class PlacesDbHandler {
         newPlaceValues.put(PlacesDbconstanst.CurrentPlaces.LOCATION, places.getLocation());
 
         try {
-            db.getWritableDatabase().insertOrThrow(PLACES_TABLE_NAME, null, newPlaceValues);
+            db.getWritableDatabase().insertOrThrow(PlacesDbconstanst.CurrentPlaces.PLACES_TABLE_NAME, null, newPlaceValues);
         } catch (SQLiteException ex) {
             Log.e(LOG_TAG, ex.getMessage());
             throw ex;
@@ -48,8 +48,28 @@ public class PlacesDbHandler {
         }
     }
 
-    //update movie on the Db
-    public void updateMovieList(Places places) {
+    public static void addPlaceToFavorite(Places places, Context context) {
+        //   SQLiteDatabase db = placesDbHelper.getWritableDatabase();
+        PlacesDbHelper db = new PlacesDbHelper(context);
+        ContentValues newPlaceValues = new ContentValues();
+        newPlaceValues.put(PlacesDbconstanst.Favorite.PLACES_NAME, places.getPlaceName());
+        newPlaceValues.put(PlacesDbconstanst.Favorite.PLACES_ADDRESS, places.getPlaceAddress());
+        newPlaceValues.put(PlacesDbconstanst.Favorite.PLACES_DISTANEC, places.getDistance());
+        newPlaceValues.put(PlacesDbconstanst.Favorite.PLACE_PHOTO, places.getPhoto());
+        newPlaceValues.put(PlacesDbconstanst.Favorite.LOCATION, places.getLocation());
+
+        try {
+            db.getWritableDatabase().insertOrThrow(PlacesDbconstanst.Favorite.PLACES_TABLE_NAME, null, newPlaceValues);
+        } catch (SQLiteException ex) {
+            Log.e(LOG_TAG, ex.getMessage());
+            throw ex;
+        } finally {
+            db.close();
+        }
+    }
+
+    //update place on the Db
+    public void updatePlaceList(Places places) {
         SQLiteDatabase db = placesDbHelper.getWritableDatabase();
         try {
             ContentValues values = new ContentValues();

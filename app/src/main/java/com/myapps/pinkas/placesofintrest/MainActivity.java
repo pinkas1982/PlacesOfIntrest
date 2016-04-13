@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,10 +22,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -79,6 +82,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AdapterView.AdapterContextMenuInfo palcesInfo;
     private Tracker mTracker;
     public static GoogleAnalytics analytics;
+    PlacesAdapter adapter;
 
 
     @Override
@@ -114,14 +118,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-
-/*    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "Setting screen name: " + "HomeScreen");
-        mTracker.setScreenName("Image~" + name);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-    }*/
 
     private void initComponent() {
         goBtn = (Button) findViewById(R.id.placeButton);
@@ -199,6 +195,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         intet.putExtra("search", textFromTextBox);
         startService(intet);
 
+
         waitProgressBar("please wait while loading places");
 
     }
@@ -260,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e("connection failed", connectionResult.toString());
+        Toast.makeText(this,"connection failed", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -284,12 +281,36 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         @Override
         public Fragment getItem(int position) {
-            return null;
+            MyFragment myFragment = MyFragment.getInstance(position);
+
+            return myFragment;
         }
 
         @Override
         public int getCount() {
-            return 0;
+            return 3;
+        }
+    }
+
+
+    public static class MyFragment extends Fragment{
+        RecyclerView recyclerView;
+        public static MyFragment getInstance(int position){
+            MyFragment myFragment = new MyFragment();
+            Bundle arg = new Bundle();
+            arg.putInt("position", position);
+            myFragment.setArguments(arg);
+            return myFragment;
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View layout = inflater.inflate(R.layout.fragment_places, container,false);
+            recyclerView = (RecyclerView)layout.findViewById(R.id.placesRecyclerView);
+            Bundle bundle =getArguments();
+
+            return layout;
         }
     }
 
@@ -336,7 +357,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void chooseKmOrMiles() {
         //the user can choose between km or miles
     }
-
 
 }
 

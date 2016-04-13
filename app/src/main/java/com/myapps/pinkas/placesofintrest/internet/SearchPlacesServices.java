@@ -50,7 +50,7 @@ public class SearchPlacesServices extends IntentService {
                 JSONObject locationObject = geometryObject.getJSONObject("location");
                 String lat = locationObject.getString("lat");
                 String lng = locationObject.getString("lng");
-                String location = ("lat:" + lat + "," + "lng:" + lng);
+                String location = (lat + "," + lng);
                 Log.d("myapp", name + " " + address);
 
 
@@ -74,6 +74,7 @@ public class SearchPlacesServices extends IntentService {
 
                 getContentResolver().insert(PlacesDbconstanst.CurrentPlaces.CONTENT_URI, arguments);
                 MainActivity.progress.dismiss();
+
 
             }
         } catch (Exception ee) {

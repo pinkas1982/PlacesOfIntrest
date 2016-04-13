@@ -7,13 +7,15 @@ import android.net.Uri;
  */
 public class PlacesDbconstanst {
     public final static String AUTHORITY = "com.myapps.pinkas.placesofintrest.placesDb.PlacesProvider";
-    public final static String TABLE_NAME = "places";
+/*    public final static String TABLE_NAME = "places";
+    public final static String TABLE_NAME1 = "history";
+    public final static String TABLE_NAME2 = "favorite";*/
 
     public static class CurrentPlaces {
-        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME);
+        public static final String PLACES_TABLE_NAME = "places";
+        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + PLACES_TABLE_NAME);
         public static final String DATABASE_NAME = "places.db";
         public static final int DATABASE_VERSION = 1;
-        public static final String PLACES_TABLE_NAME = "places";
         public static final String PLACES_ID = "_id";
         public static final String PLACES_NAME = "place_name";
         public static final String PLACES_ADDRESS = "address";
@@ -25,10 +27,8 @@ public class PlacesDbconstanst {
     }
 
     public static class History {
-        public static final String DATABASE_NAME = "places.db";
-        public static final int DATABASE_VERSION = 1;
-        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME);
         public static final String PLACES_TABLE_NAME = "history";
+        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + PLACES_TABLE_NAME);
         public static final String PLACES_ID = "_id";
         public static final String PLACES_NAME = "place_name";
         public static final String PLACES_ADDRESS = "address";
@@ -39,10 +39,8 @@ public class PlacesDbconstanst {
     }
 
     public static class Favorite {
-        public static final String DATABASE_NAME = "places.db";
-        public static final int DATABASE_VERSION = 1;
-        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME);
-        public static final String PLACES_TABLE_NAME = "favorit";
+        public static final String PLACES_TABLE_NAME = "favorite";
+        public final static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + PLACES_TABLE_NAME);
         public static final String PLACES_ID = "_id";
         public static final String PLACES_NAME = "place_name";
         public static final String PLACES_ADDRESS = "address";

@@ -32,11 +32,17 @@ import com.myapps.pinkas.placesofintrest.PlacesAdapter;
 import com.myapps.pinkas.placesofintrest.R;
 
 import com.myapps.pinkas.placesofintrest.places.Places;
+import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbHandler;
+import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbHelper;
 import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst;
 
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.CurrentPlaces.*;
+//import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.Favorite.*;
+
+
+
 
 
 public class PlacesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
@@ -48,6 +54,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     MyMapFragment mapFragment;
     RecyclerView rv;
 
+
     AdapterView.AdapterContextMenuInfo palcesInfo;
 
     public PlacesFragment() {
@@ -58,6 +65,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View myFragView = inflater.inflate(R.layout.fragment_places, container, false);
         rv = (RecyclerView) myFragView.findViewById(R.id.placesRecyclerView);
@@ -65,6 +73,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
         rv.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity()).color(Color.BLACK).build());
 
         final Cursor cursor = getActivity().getContentResolver().query(CONTENT_URI, null, null, null, null);
+
         adapter = new PlacesAdapter(cursor, getActivity());
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -139,18 +148,34 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
                 break;
             case R.id.save_id:
                 // save to favorite
-                Toast.makeText(getActivity(),"save favorite",Toast.LENGTH_LONG).show();
 
+                saveToFavorite();
         }
         return super.onContextItemSelected(item);
     }
 
-    private void openWaze() {
+    private void saveToFavorite() {
+        Toast.makeText(getActivity(),"save favorite",Toast.LENGTH_LONG).show();
 
+        Cursor c = adapter.cursor;
+        c.moveToPosition(c.getPosition());
+        String name = c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_NAME));
+        String adr = c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_ADDRESS));
+      //  String dis = c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_DISTANEC));
+        Places p = new Places(0,null,null,adr,name);
+        PlacesDbHandler.addPlaceToFavorite(p,getActivity());
+
+    }
+
+    private void openWaze() {
+        Cursor c = adapter.cursor;
         try
         {
-            String url = "waze://?q=Hawaii";
-            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+            String url = "waze://?ll=";
+            String url1= c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_DISTANEC));
+            String url2="&navigate=yes";
+            String u = url + url1 + url2;
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( u ) );
             startActivity( intent );
         }
         catch ( ActivityNotFoundException ex  )
@@ -163,10 +188,15 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
 
 //this is the share intent method
     private void shareIt() {
+        Cursor c = adapter.cursor;
+        c.moveToPosition(c.getPosition());
+        String name = c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_NAME));
+        String adr = c.getString(c.getColumnIndex(PlacesDbconstanst.CurrentPlaces.PLACES_ADDRESS));
+
+
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, "check out this place");
-     //   sharingIntent.putExtra(Intent.EXTRA_TEXT,);
-        //sharingIntent.putExtra(Intent.EXTRA_TEXT, );
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, "check out this place"+", "+ name +", " + adr);
+      //  sharingIntent.putExtra(Intent.EXTRA_TEXT,name);
         sharingIntent.setType("text/plain");
        // startActivity(sharingIntent);
         startActivity(Intent.createChooser(sharingIntent, getResources().getText(R.string.send_to)));
