@@ -47,22 +47,24 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.myapps.pinkas.placesofintrest.fragmants.MyMapFragment;
+import com.myapps.pinkas.placesofintrest.fragmants.SearchPlaceFragment;
 import com.myapps.pinkas.placesofintrest.internet.SearchPlacesNearBy;
 import com.myapps.pinkas.placesofintrest.internet.SearchPlacesServices;
 import com.myapps.pinkas.placesofintrest.places.Places;
+import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst;
 import com.myapps.pinkas.placesofintrest.tabs.SlidingTabsLayout;
 import com.myapps.pinkas.placesofintrest.utils.PlacesFragmentListenerr;
 
 //import com.myapps.pinkas.placesofintrest.utils.ClickListener;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, PlacesFragmentListenerr,
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, PlacesFragmentListenerr,SearchPlaceFragment.SearchPlaceFragmentListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     FragmentManager fm;
     MyMapFragment mapFragment;
     public static ProgressDialog progress;
-    private PlacesAdapter placesAdapter;
+  //  private PlacesAdapter placesAdapter;
     Button goBtn;
     CheckBox nearBycB;
     EditText mySearch;
@@ -82,13 +84,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AdapterView.AdapterContextMenuInfo palcesInfo;
     private Tracker mTracker;
     public static GoogleAnalytics analytics;
-    PlacesAdapter adapter;
+  //  PlacesAdapter adapter;
+   public static Boolean radiusType = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    //    typeOfScreen();
         initComponent();
         registerForContextMenu(rv);
         buildGoogleApiClient();
@@ -118,19 +122,50 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+/*    private void typeOfScreen() {
+        // check if single fragment view (phone)
+        // or dual fragment view (tablet)
+        if (isInSingleFragment()) {
+            //hide the B fragment:
+            FragmentManager fm = getFragmentManager();
+            //find the fragment (by id):
+            android.app.Fragment fragmentB = fm.findFragmentById(R.id.map);
+            //do the hide:
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.hide(fragmentB);
+            ft.commit();
+        }
+    }*/
+
+/*        // helper method: are we in a single fragment (like a phone) ?
+    protected boolean isInSingleFragment() {
+        //try to find the layout with id : layout_singleLayout
+        View layout = findViewById(R.id.layout_singleLayout);
+
+        // this will be null on a dual fragment layout
+
+        if (layout != null) {
+            // found - we are
+            return true;
+        } else {
+            // not found - we are not.
+            return false;
+        }
+    }*/
+
 
     private void initComponent() {
         goBtn = (Button) findViewById(R.id.placeButton);
         goBtn.setOnClickListener(this);
         mySearch = (EditText) findViewById(R.id.placeEditText);
-        placesAdapter = new PlacesAdapter(cursor, this);
+      //  placesAdapter = new PlacesAdapter(cursor, this);
         nearBycB = (CheckBox) findViewById(R.id.nearBycheckBox);
         nearBycB.setOnClickListener(this);
         mPager = (ViewPager) findViewById(R.id.pager);
         mTabs = (SlidingTabsLayout) findViewById(R.id.tabs);
-        mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-        mTabs.setViewPager(mPager);
-        rv =  (RecyclerView)findViewById(R.id.placesRecyclerView);
+//        mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+//        mTabs.setViewPager(mPager);
+        rv = (RecyclerView) findViewById(R.id.placesRecyclerView);
     }
 
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -161,9 +196,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //this is the onClick for the search button and for the search checkbox
     @Override
     public void onClick(View v) {
+        getContentResolver().delete(PlacesDbconstanst.CurrentPlaces.CONTENT_URI, null, null);
 
         switch (v.getId()) {
             case R.id.placeButton:
+
                 searchPlacesByText();
                 break;
             case R.id.nearBycheckBox:
@@ -195,7 +232,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         intet.putExtra("search", textFromTextBox);
         startService(intet);
 
-
         waitProgressBar("please wait while loading places");
 
     }
@@ -212,15 +248,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onLocationSelected(Places places) {
-        //   Toast.makeText(this, "on click" + places, Toast.LENGTH_LONG).show();
         fm = getFragmentManager();
         // get the map object from the fragment:
         mapFragment = MyMapFragment.newInstance(places);
-
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragmantContainer, mapFragment, "map");
         ft.addToBackStack(null);
-
         ft.commit();
 
     }
@@ -229,14 +262,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onConnected(Bundle bundle) {
         Toast.makeText(this, "Ready to map", Toast.LENGTH_LONG).show();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             return;
         }
         currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -257,7 +285,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this,"connection failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "connection failed", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -267,6 +295,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void onSearchPresed() {
+
+    }
+
+    //this method is for the tabs
     class MyPagerAdapter extends FragmentPagerAdapter {
         String[] tabs;
 
@@ -293,9 +327,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    public static class MyFragment extends Fragment{
+    public static class MyFragment extends Fragment {
         RecyclerView recyclerView;
-        public static MyFragment getInstance(int position){
+
+        public static MyFragment getInstance(int position) {
             MyFragment myFragment = new MyFragment();
             Bundle arg = new Bundle();
             arg.putInt("position", position);
@@ -306,15 +341,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View layout = inflater.inflate(R.layout.fragment_places, container,false);
-            recyclerView = (RecyclerView)layout.findViewById(R.id.placesRecyclerView);
-            Bundle bundle =getArguments();
+            View layout = inflater.inflate(R.layout.fragment_places, container, false);
+            recyclerView = (RecyclerView) layout.findViewById(R.id.placesRecyclerView);
+            Bundle bundle = getArguments();
 
             return layout;
         }
     }
 
 
+    //when I want to return from a fragment I use this method in the main activity
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+//this method create the menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -353,7 +399,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
     }
-
+//TODO i need give the user the option to choose between km & mile
     private void chooseKmOrMiles() {
         //the user can choose between km or miles
     }

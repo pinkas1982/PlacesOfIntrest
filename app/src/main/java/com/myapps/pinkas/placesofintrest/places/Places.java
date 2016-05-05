@@ -10,6 +10,8 @@ public class Places {
     private String location;
     private String photo;
     private double distance;
+    private String lat;
+    private String lon;
 
     public Places(double distance, String location, String photo, String placeAddress, String placeName) {
         this.distance = distance;
@@ -21,6 +23,26 @@ public class Places {
 
 
 
+
+    public Places (String placeName, String placeAddress, String lat,String lon ){
+    this(0,placeName,placeAddress,lat,lon );
+
+}
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
 
     public double getDistance() {
         return distance;

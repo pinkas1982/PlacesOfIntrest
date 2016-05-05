@@ -7,9 +7,9 @@ import android.net.Uri;
  */
 public class PlacesDbconstanst {
     public final static String AUTHORITY = "com.myapps.pinkas.placesofintrest.placesDb.PlacesProvider";
-/*    public final static String TABLE_NAME = "places";
-    public final static String TABLE_NAME1 = "history";
-    public final static String TABLE_NAME2 = "favorite";*/
+    public final static String DISTANCE_UNIT = "distance unit";
+    public final static String KM = "km";
+
 
     public static class CurrentPlaces {
         public static final String PLACES_TABLE_NAME = "places";
@@ -49,4 +49,6 @@ public class PlacesDbconstanst {
         public static final String PLACE_PHOTO = "photo";
         public static final String LOG_TAG = "PlacesDb";
     }
+
+
 }

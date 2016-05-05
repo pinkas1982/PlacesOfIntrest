@@ -3,12 +3,16 @@ package com.myapps.pinkas.placesofintrest.internet;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.myapps.pinkas.placesofintrest.MainActivity;
 //import com.myapps.pinkas.placesofintrest.PlacesAdapter;
+import com.myapps.pinkas.placesofintrest.fragmants.PlacesFragment;
 import com.myapps.pinkas.placesofintrest.internet.GoogleAccess;
 import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst;
 
@@ -19,8 +23,9 @@ import org.json.JSONObject;
 public class SearchPlacesServices extends IntentService {
 
     public static final String URL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=";
-    public static final String KEY = "&key=AIzaSyBrsPDbnaQFd4aHAUNFkpwQZDtWnK0-zw0";
-
+    public static final String KEY = "&key=AIzaSyASuOm2zEVuVChtd647eWMKze_VsbjbqFo";
+    public static String lat;
+    public static String lng;
     //  PlacesAdapter adapter;
 
     public SearchPlacesServices() {
@@ -37,6 +42,7 @@ public class SearchPlacesServices extends IntentService {
         //before parsing the JSON let's delete all records
         getContentResolver().delete(PlacesDbconstanst.CurrentPlaces.CONTENT_URI, null, null);
 
+
         try {
 
             JSONObject completeResponseObject = new JSONObject(JSON);
@@ -48,9 +54,9 @@ public class SearchPlacesServices extends IntentService {
                 String address = currentObject.getString("formatted_address");
                 JSONObject geometryObject = currentObject.getJSONObject("geometry");
                 JSONObject locationObject = geometryObject.getJSONObject("location");
-                String lat = locationObject.getString("lat");
-                String lng = locationObject.getString("lng");
-                String location = (lat + "," + lng);
+                 lat = locationObject.getString("lat");
+                 lng = locationObject.getString("lng");
+                String location = ((lat + "," + lng));
                 Log.d("myapp", name + " " + address);
 
 
@@ -84,4 +90,19 @@ public class SearchPlacesServices extends IntentService {
     }
 
 
+
+    public static double haversine(double lat1, double lng1, double lat2, double lng2) {
+
+        double firstlat = Double.parseDouble(lat);
+        double firstlng = Double.parseDouble(lng);
+        int r = 6371; // average radius of the earth in km
+        double dLat = Math.toRadians(lat2 - firstlat);
+        double dLon = Math.toRadians(lng2 - firstlng);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = r * c;
+        return d;
+    }
 }

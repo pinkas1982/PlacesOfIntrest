@@ -3,11 +3,13 @@ package com.myapps.pinkas.placesofintrest;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,7 +33,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.myapps.pinkas.placesofintrest.internet.GoogleAccess;
 import com.myapps.pinkas.placesofintrest.places.Places;
+import com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst;
 import com.myapps.pinkas.placesofintrest.utils.PlacesFragmentListenerr;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.CurrentPlaces.*;
@@ -45,10 +51,8 @@ import static com.myapps.pinkas.placesofintrest.placesDb.PlacesDbconstanst.Curre
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolder>  {
 
     public Cursor cursor;
-    public Cursor cursor1;
-
     private static Context context;
-    private static TextView placeName, address, distance, url;
+    private static TextView placeName, address, distance;
     public static ImageView imgplace;
     public static PlaceHolder.ClickListener clickListener;
     private static Places place;
@@ -58,10 +62,6 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     AdapterView.AdapterContextMenuInfo palcesInfo;
 
 
-    public static double currentLatitude;
-    public static double currentLongitude;
-    public  double lat;
-    public double lng;
     public double d;
 
     private int position;
@@ -77,10 +77,6 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     public PlacesAdapter(Cursor cursor, Context context) {
         this.context = context;
         this.cursor = cursor;
-      // mDataSetObserver = new NotifyingDataSetObserver();
-       /* if (cursor != null) {
-            cursor.registerDataSetObserver(mDataSetObserver);
-        }*/
 
     }
 
@@ -113,23 +109,30 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
             int column_number = cursor.getColumnIndex(PLACES_NAME);
             String name = cursor.getString(column_number);
+            Log.e("place name", name);
             placeName.setText(name);
 
             int column_number2 = cursor.getColumnIndex(PLACES_ADDRESS);
             String adr = cursor.getString(column_number2);
             address.setText(adr);
 
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            String distanceUnitStr = pref.getString(PlacesDbconstanst.DISTANCE_UNIT, PlacesDbconstanst.KM);
             int column_number3 = cursor.getColumnIndex(PLACES_DISTANEC);
-            String dis = cursor.getString(column_number3);
-    //        getdistance(currentLocation);
-            distance.setText(dis);
+            Double dis = cursor.getDouble(column_number3);
+            NumberFormat formatter = new DecimalFormat("#0.00");
+            String distanceStr = formatter.format(dis);
+            distance.setText(distanceStr);
 
 
             int column_number4 = cursor.getColumnIndex(PLACE_PHOTO);
             String photo = cursor.getString(column_number4);
-              if (!photo.equals("")) {
-                GoogleAccess.myImageDownloader loader = new GoogleAccess.myImageDownloader(imgplace);
-                loader.execute(photo);
+            if(photo!=null) {
+                if (!photo.equals("")) {
+                    GoogleAccess.myImageDownloader loader = new GoogleAccess.myImageDownloader(imgplace);
+                    loader.execute(photo);
+                }
             }
 
         }
@@ -144,37 +147,17 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
     }
 
-/*public void getdistance(Location currentLocation){
-   currentLocation = MainActivity.currentLocation;
-    currentLatitude = currentLocation.getLatitude();
-    currentLongitude = currentLocation.getLongitude();
-
-    currentLocation.setLatitude(currentLatitude);
-    currentLocation.setLongitude(currentLongitude);
-
-    Location loc2 = new Location("");
-*//*    loc2.setLatitude(lat2);
-    loc2.setLongitude(lon2);
-
-    float distanceInMeters = loc1.distanceTo(loc2);*//*
-}*/
-
-
-
-
 
 
     public void setClickListener(PlaceHolder.ClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
+
     @Override
     public int getItemCount() {
         return cursor.getCount();
     }
-
-
-
 
 
 
@@ -192,15 +175,11 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
             distance = (TextView) itemView.findViewById(R.id.distanceTextView);
             imgplace = (ImageView) itemView.findViewById(R.id.placesImageViewId);
             itemView.setOnClickListener(this);
-          //  itemView.setOnLongClickListener(this);
             c = cursor;
             itemView.setOnCreateContextMenuListener(this);
 
         }
-
-        RecyclerView rv;
-
-        @Override
+  @Override
         public void onClick(View v) {
             PlacesFragmentListenerr listenerr = (PlacesFragmentListenerr) context;
             if (c.moveToPosition(getPosition())) {
@@ -223,6 +202,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
                     Menu.NONE, R.string.open_waze);
             menu.add(Menu.NONE, R.id.save_id,
                     Menu.NONE, R.string.save_favorite);
+            menu.add(Menu.NONE, R.id.favorite_id,
+                    Menu.NONE, R.string.open_favorite);
 
         }
 
@@ -235,23 +216,6 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
             public void itemClicked(View view, int position);
         }
     }
-
-/*    private class NotifyingDataSetObserver extends DataSetObserver {
-        @Override
-        public void onChanged() {
-            super.onChanged();
-            mDataValid = true;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void onInvalidated() {
-            super.onInvalidated();
-            mDataValid = false;
-            notifyDataSetChanged();
-
-        }*/
-
 
 
 }

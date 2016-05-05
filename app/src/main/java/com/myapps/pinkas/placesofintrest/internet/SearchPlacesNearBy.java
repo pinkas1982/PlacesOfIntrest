@@ -3,6 +3,8 @@ package com.myapps.pinkas.placesofintrest.internet;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.myapps.pinkas.placesofintrest.MainActivity;
@@ -17,6 +19,11 @@ public class SearchPlacesNearBy extends IntentService {
 
     public static final String URL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=";
     public static final String KEY = "&key=AIzaSyBrsPDbnaQFd4aHAUNFkpwQZDtWnK0-zw0";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
+
+    private double currLocationLat;
+    private double currLocationLng;
 
 
     public SearchPlacesNearBy() {
@@ -29,6 +36,9 @@ public class SearchPlacesNearBy extends IntentService {
 
         String query = intent.getStringExtra("searchNearBy");
         String JSON = NearByGoogleAccess.searchPlaceNearBy(query);
+
+        currLocationLat = intent.getDoubleExtra(LAT, 32);
+        currLocationLng = intent.getDoubleExtra(LNG, 35);
 
         //before parsing the JSON let's delete all records
         getContentResolver().delete(PlacesDbconstanst.CurrentPlaces.CONTENT_URI, null, null);
@@ -43,8 +53,8 @@ public class SearchPlacesNearBy extends IntentService {
                 String name = currentObject.getString("name");
                 JSONObject geometryObject = currentObject.getJSONObject("geometry");
                 JSONObject locationObject = geometryObject.getJSONObject("location");
-                String lat = locationObject.getString("lat");
-                String lng = locationObject.getString("lng");
+                Double lat = locationObject.getDouble("lat");
+                Double lng = locationObject.getDouble("lng");
                 String location = ("lat:" + lat + "," + "lng:" + lng);
 
 
@@ -58,7 +68,11 @@ public class SearchPlacesNearBy extends IntentService {
                 } catch (JSONException ex) {
                     Log.e("error", ex.getMessage());
                 }
+                Double distance = Utils.haversine(currLocationLat, currLocationLng, lat, lng);
 
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                String distanceUnitStr = pref.getString(PlacesDbconstanst.DISTANCE_UNIT, PlacesDbconstanst.KM);
+                Log.d("tag", "SearchPlacesService::distanceUnitStr: " + distanceUnitStr);
 
                 ContentValues arguments = new ContentValues();
                 arguments.put(PlacesDbconstanst.CurrentPlaces.PLACES_NAME, name);

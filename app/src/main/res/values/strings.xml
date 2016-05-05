@@ -12,6 +12,9 @@
     <string name="share_place">Share Place</string>
     <string name="open_waze">Open Waze</string>
     <string name="save_favorite">Save Favorite</string>
+    <string name="open_favorite">Open Favorite</string>
+    <string name="searchPlace">iSearch</string>
+    <string name="nameValue">CITY</string>
     <string-array name="tabs">
         <item>Main</item>
         <item>Favorite</item>

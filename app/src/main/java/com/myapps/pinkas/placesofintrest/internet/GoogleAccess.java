@@ -28,7 +28,7 @@ public class GoogleAccess {
     public static String searchPlace(String q) {
 
         String url1 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";//search by text
-        String url2 = "&sensor=false&key=AIzaSyBrsPDbnaQFd4aHAUNFkpwQZDtWnK0-zw0";
+        String url2 = "&sensor=false&key=AIzaSyASuOm2zEVuVChtd647eWMKze_VsbjbqFo";
         String completeURL = url1 + q + url2;
 
 
