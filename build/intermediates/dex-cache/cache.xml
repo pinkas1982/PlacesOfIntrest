@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\pinkas\AndroidStudioProjects\PlacesOfIntrest_new1\PlacesOfIntrest_new\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="f85f2cc0c13ffdab5d8cc7157d88c5ef4be89eae">
+        <dex dex="C:\Users\pinkas\AndroidStudioProjects\PlacesOfIntrest_new1\PlacesOfIntrest_new\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_12708865930592b4032656303d6aa9488d9db210.jar" />
+    </item>
+
+</items>
